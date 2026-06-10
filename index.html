@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copiador de Correos</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #2d3748;
+            --text-muted: #718096;
+            --accent-color: #4a5568;
+            --success-bg: #e6fffa;
+            --success-border: #319795;
+            --success-text: #234e52;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.2s ease-in-out;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        /* Grid Responsive */
+        .email-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            width: 100%;
+        }
+
+        /* Estilo de los Recuadros */
+        .email-card {
+            background-color: var(--card-bg);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .email-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            background-color: #f8fafc;
+        }
+
+        .email-address {
+            font-size: 1.1rem;
+            font-weight: 500;
+            word-break: break-all;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .status-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Estado Copiado (Verde) */
+        .email-card.copied {
+            background-color: var(--success-bg) !important;
+            border-color: var(--success-border);
+            transform: translateY(0);
+        }
+
+        .email-card.copied .email-address {
+            color: var(--success-text);
+        }
+
+        .email-card.copied .status-text {
+            color: var(--success-border);
+            font-weight: bold;
+        }
+
+        /* Animación sutil de feedback */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.97); }
+            100% { transform: scale(1); }
+        }
+
+        .email-card:active {
+            animation: pulse 0.1s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Copiar Correos Electrónicos</h1>
+            <p class="subtitle">Haz clic en cualquier recuadro para copiar la dirección al portapapeles de forma rápida.</p>
+        </header>
+
+        <!-- Contenedor de la lista de correos -->
+        <div class="email-grid" id="emailGrid">
+            
+            <!-- 
+                PARA AGREGAR O MODIFICAR CORREOS:
+                Duplica o edita los bloques `<div class="email-card">` aquí abajo.
+                Asegúrate de cambiar el texto dentro de la clase "email-address".
+            -->
+            
+            <div class="email-card">
+                <span class="email-address">ejemplo.uno@correo.com</span>
+                <span class="status-text">Clic para copiar</span>
+            </div>
+
+            <div class="email-card">
+                <span class="email-address">contacto@empresa.com</span>
+                <span class="status-text">Clic para copiar</span>
+            </div>
+
+            <div class="email-card">
+                <span class="email-address">soporte.tecnico@servicio.org</span>
+                <span class="status-text">Clic para copiar</span>
+            </div>
+
+            <div class="email-card">
+                <span class="email-address">ventas.latam@negocio.net</span>
+                <span class="status-text">Clic para copiar</span>
+            </div>
+
+            <div class="email-card">
+                <span class="email-address">info.marketing@agencia.com</span>
+                <span class="status-text">Clic para copiar</span>
+            </div>
+
+            <div class="email-card">
+                <span class="email-address">recursos.humanos@corporativo.com</span>
+                <span class="status-text">Clic para copiar</span>
+            </div>
+
+            <!-- Puedes seguir agregando más recuadros aquí -->
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.email-card');
+
+            cards.forEach(card => {
+                card.addEventListener('click', async () => {
+                    // Obtiene el texto del correo electrónico dentro de la tarjeta actual
+                    const emailText = card.querySelector('.email-address').textContent.trim();
+
+                    try {
+                        // Copiar al portapapeles usando la API moderna
+                        await navigator.clipboard.writeText(emailText);
+
+                        // Remover la clase 'copied' de todas las tarjetas antes de activar la actual
+                        cards.forEach(c => {
+                            c.classList.remove('copied');
+                            c.querySelector('.status-text').textContent = 'Clic para copiar';
+                        });
+
+                        // Activar el estado verde y cambiar texto de la tarjeta clickeada
+                        card.classList.add('copied');
+                        card.querySelector('.status-text').textContent = '¡Copiado!';
+
+                    } catch (err) {
+                        console.error('Error al copiar al portapapeles: ', err);
+                        alert('No se pudo copiar el correo de forma automática. Por favor, selecciónalo manualmente.');
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
